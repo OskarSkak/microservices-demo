@@ -51,10 +51,10 @@ services:
     build:
       context: ./email-service
       dockerfile: Dockerfile
+    env_file:
+      - .env
     environment:
       - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
-      - FASTMAIL_EMAIL=
-      - FASTMAIL_APP_PASSWORD=
     volumes:
       - pdf_storage:/path/to/pdf
     depends_on:
