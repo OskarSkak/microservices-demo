@@ -16,12 +16,21 @@ services:
       RABBITMQ_DEFAULT_PASS: password
     restart: unless-stopped
 
-  node-app:
+  api-service:
     build:
       context: ./api
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    environment:
+      - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
+    depends_on:
+      - rabbitmq
+
+  database-service:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
     environment:
       - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
     depends_on:
