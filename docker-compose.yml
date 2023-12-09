@@ -36,6 +36,24 @@ services:
     depends_on:
       - rabbitmq
 
+  pdf-generator-service:
+    build:
+      context: ./pdf-generator
+      dockerfile: Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
+    depends_on:
+      - rabbitmq
+
+  email-service:
+    build:
+      context: ./email-service
+      dockerfile: Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
+    depends_on:
+      - rabbitmq
+
 volumes:
   rabbitmq_data:
   rabbitmq_log:

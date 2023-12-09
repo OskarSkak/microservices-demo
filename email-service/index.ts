@@ -22,8 +22,7 @@ async function connectWithRetry(amqpUrl: string, maxRetries: number = 10) {
 
 async function start() {
   const amqpUrl: string = "amqp://user:password@172.19.0.2:5672";
-  const queue: string = 'statement-request';
-  const outputQueue: string = 'filtered-data'
+  const queue: string = 'pdf';
 
   try {
     const conn = await connectWithRetry(amqpUrl);
@@ -36,7 +35,6 @@ async function start() {
     channel.consume(queue, (msg) => {
       if (msg) {
         console.log("Received:", msg.content.toString());
-        channel.sendToQueue(outputQueue, Buffer.from(JSON.stringify({ "test": "testval" })));
         channel.ack(msg);
       }
     }, {
