@@ -42,6 +42,8 @@ services:
       dockerfile: Dockerfile
     environment:
       - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
+    volumes:
+      - pdf_storage:/path/to/pdf
     depends_on:
       - rabbitmq
 
@@ -51,9 +53,12 @@ services:
       dockerfile: Dockerfile
     environment:
       - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
+    volumes:
+      - pdf_storage:/path/to/pdf
     depends_on:
       - rabbitmq
 
 volumes:
   rabbitmq_data:
   rabbitmq_log:
+  pdf_storage:

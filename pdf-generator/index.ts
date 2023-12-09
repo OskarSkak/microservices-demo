@@ -1,4 +1,5 @@
 import amqp from 'amqplib';
+import {generatePDF, createDummyPDF} from './src/pdfCreation';
 
 async function connectWithRetry(amqpUrl: string, maxRetries: number = 10) {
   let retries = 0;
@@ -33,10 +34,11 @@ async function start() {
     await channel.assertQueue(queue, { durable: false });
     console.log("Waiting for messages in %s.", queue);
 
-    channel.consume(queue, (msg) => {
+    channel.consume(queue, async (msg) => {
       if (msg) {
         console.log("Received:", msg.content.toString());
-        channel.sendToQueue(outputQueue, Buffer.from(JSON.stringify({ "pdfOutputMessage": "locationOfPdf" })));
+        let pdfLocation = await createDummyPDF();
+        channel.sendToQueue(outputQueue, Buffer.from(JSON.stringify({ "locationOfPdf": pdfLocation, "userEmail": "dskfjsk@sdkfj.com" })));
         channel.ack(msg);
       }
     }, {
