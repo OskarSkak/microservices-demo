@@ -38,7 +38,7 @@ async function start() {
       if (msg) {
         console.log("Received:", msg.content.toString());
         let pdfLocation = await createDummyPDF();
-        channel.sendToQueue(outputQueue, Buffer.from(JSON.stringify({ "locationOfPdf": pdfLocation, "userEmail": "dskfjsk@sdkfj.com" })));
+        channel.sendToQueue(outputQueue, Buffer.from(JSON.stringify({ "locationOfPdf": pdfLocation, "userEmail": "skakkristiansen@gmail.com" })));
         channel.ack(msg);
       }
     }, {

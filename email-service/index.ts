@@ -1,4 +1,5 @@
 import amqp from 'amqplib';
+import {sendEmail} from './src/EmailManager'
 
 async function connectWithRetry(amqpUrl: string, maxRetries: number = 10) {
   let retries = 0;
@@ -33,13 +34,29 @@ async function start() {
     console.log("Waiting for messages in %s.", queue);
 
     channel.consume(queue, (msg) => {
-      if (msg) {
-        console.log("Received:", msg.content.toString());
-        channel.ack(msg);
-      }
-    }, {
-      noAck: false
-    });
+        if (msg) {
+          const msgContent = msg.content.toString();
+          console.log("Received:", msgContent);
+      
+          try {
+            const data = JSON.parse(msgContent);
+            const pdfLocation = data.locationOfPdf;
+            const userEmail = data.userEmail;
+      
+            console.log("PDF Location:", pdfLocation);
+            console.log("User Email:", userEmail);
+
+            sendEmail(userEmail, pdfLocation);
+          } catch (error) {
+            console.error("Error parsing message content:", error);
+          }
+      
+          channel.ack(msg);
+        }
+      }, {
+        noAck: false
+      });
+      
   } catch (error: any) {
     console.error("Error:", error);
   }
