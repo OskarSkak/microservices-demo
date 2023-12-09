@@ -1,0 +1,1 @@
+![Demo architecture](image.png)
