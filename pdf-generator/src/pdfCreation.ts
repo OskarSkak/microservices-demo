@@ -9,7 +9,6 @@ export async function generatePDF(
   const pdfPath = path.join("/path/to/pdf", "transaction_statement.pdf");
   const pdfDoc = new PDFDocument();
 
-  // Create a PDF file with transactions
   pdfDoc.pipe(fs.createWriteStream(pdfPath));
 
   pdfDoc
@@ -20,25 +19,26 @@ export async function generatePDF(
   if (transactions.length === 0) {
     pdfDoc.text("No transactions found for the specified period.");
   } else {
-    // Display transactions in a table
-    pdfDoc.font("Helvetica-Bold");
-    pdfDoc.fontSize(12);
+    pdfDoc.font("Helvetica-Bold").fontSize(12);
 
-    pdfDoc.text("Date", { width: 100, align: "left" });
-    pdfDoc.text("User Email", { width: 200, align: "left" });
-    pdfDoc.text("Amount", { width: 100, align: "left" });
+    const startX = 50; // Starting X coordinate for the first column
+    const lineHeight = 20; // Line height for each row
+    let currentY = 100; // Starting Y coordinate
 
-    pdfDoc.moveDown(0.5);
+    // Header
+    pdfDoc.text("Date", startX, currentY);
+    pdfDoc.text("User Email", startX + 100, currentY);
+    pdfDoc.text("Amount", startX + 300, currentY);
+
+    currentY += lineHeight;
     pdfDoc.font("Helvetica");
 
+    // Rows
     transactions.forEach((transaction) => {
-      pdfDoc.text(transaction.date_of_transaction, {
-        width: 100,
-        align: "left",
-      });
-      pdfDoc.text(transaction.user_email, { width: 200, align: "left" });
-      pdfDoc.text(transaction.amount.toString(), { width: 100, align: "left" });
-      pdfDoc.moveDown(0.5);
+      pdfDoc.text(transaction.date_of_transaction, startX, currentY);
+      pdfDoc.text(transaction.user_email, startX + 100, currentY);
+      pdfDoc.text(transaction.amount.toString(), startX + 300, currentY);
+      currentY += lineHeight;
     });
   }
 
@@ -48,18 +48,18 @@ export async function generatePDF(
 }
 
 export async function createDummyPDF(): Promise<string> {
-    // Dummy transactions data
-    const dummyTransactions: Transaction[] = [
-      { date_of_transaction: "2023-01-01", user_email: "user1@example.com", amount: 100 },
-      { date_of_transaction: "2023-01-02", user_email: "user2@example.com", amount: 200 },
-    ];
-  
-    try {
-      const pdfPath = await generatePDF(dummyTransactions);
-      console.log(`PDF generated at: ${pdfPath}`);
-      return pdfPath;
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      return "";
-    }
+  // Dummy transactions data
+  const dummyTransactions: Transaction[] = [
+    { date_of_transaction: "2023-01-01", user_email: "user1@example.com", amount: 100 },
+    { date_of_transaction: "2023-01-02", user_email: "user2@example.com", amount: 200 },
+  ];
+
+  try {
+    const pdfPath = await generatePDF(dummyTransactions);
+    console.log(`PDF generated at: ${pdfPath}`);
+    return pdfPath;
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    return "";
   }
+}
